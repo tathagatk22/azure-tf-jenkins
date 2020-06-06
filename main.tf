@@ -79,7 +79,6 @@ resource "azurerm_network_security_rule" "port_for_jenkins" {
 }
 
 
-
 # Connect the security group to the network interface
 resource "azurerm_network_interface_security_group_association" "nic_ng_association" {
   network_interface_id      = "${azurerm_network_interface.nic.id}"
@@ -88,7 +87,7 @@ resource "azurerm_network_interface_security_group_association" "nic_ng_associat
 
 resource "azurerm_linux_virtual_machine" "virtual_machine" {
   name                  = "jenkinsVM"
-  location              = "eastus"
+  location              = "${var.regionName}"
   resource_group_name   = "${azurerm_resource_group.resource_group.name}"
   network_interface_ids = ["${azurerm_network_interface.nic.id}"]
   size                  = "${var.node_type}"
@@ -109,4 +108,8 @@ resource "azurerm_linux_virtual_machine" "virtual_machine" {
   admin_username                  = "${var.username}"
   admin_password                  = "${var.password}"
   disable_password_authentication = false
+}
+
+output "public_ip" {
+  value = "${azurerm_public_ip.public_ip.ip_address}"
 }
